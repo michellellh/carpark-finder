@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { List, ListItem, ListItemText, Typography, IconButton, TextField, Button, Box } from '@mui/material';
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+  IconButton,
+  Divider
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { VehicleProfile } from '../types/vehicle';
@@ -13,62 +23,61 @@ interface VehicleProfilesProps {
 
 const VehicleProfiles = ({ profiles, onAddProfile, onUpdateProfile, onDeleteProfile }: VehicleProfilesProps) => {
   const [name, setName] = useState('');
-  const [height, setHeight] = useState<string>('');
+  const [height, setHeight] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleSave = () => {
-    if (name && height) {
-      const heightValue = parseFloat(height);
-      if (!isNaN(heightValue)) {
-        if (editingIndex !== null) {
-          onUpdateProfile(editingIndex, { name, height: heightValue });
-        } else {
-          onAddProfile({ name, height: heightValue });
-        }
-        setName('');
-        setHeight('');
-        setEditingIndex(null);
-      }
+    const profile = { name, height: parseFloat(height) };
+    if (editingIndex !== null) {
+      onUpdateProfile(editingIndex, profile);
+      setEditingIndex(null);
+    } else {
+      onAddProfile(profile);
     }
+    setName('');
+    setHeight('');
   };
 
   const handleEdit = (index: number) => {
     const profile = profiles[index];
     setName(profile.name);
-    setHeight(String(profile.height));
+    setHeight(profile.height.toString());
     setEditingIndex(index);
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>Manage Vehicle Profiles</Typography>
+    <Box>
+      <Typography variant="h5" gutterBottom>Vehicle Profiles</Typography>
       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
         <TextField label="Profile Name" value={name} onChange={(e) => setName(e.target.value)} />
         <TextField
-          label="Vehicle Height in meters, with 1 decimal point"
+          label="Vehicle Height (m)"
           value={height}
           onChange={(e) => setHeight(e.target.value)}
-          InputProps={{ inputProps: { step: '0.1' } }}
+          type="number"
+          inputProps={{ step: '0.1' }}
         />
-        <Button onClick={handleSave}>{editingIndex !== null ? 'Update' : 'Add'}</Button>
+        <Button onClick={handleSave} variant="contained">{editingIndex !== null ? 'Save' : 'Add'}</Button>
       </Box>
       <List>
         {profiles.map((profile, index) => (
-          <ListItem
-            key={index}
-            secondaryAction={
-              <>
-                <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(index)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteProfile(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              </>
-            }
-          >
-            <ListItemText primary={profile.name} secondary={`Height: ${profile.height}m`} />
-          </ListItem>
+          <div key={index}>
+            <ListItem
+              secondaryAction={
+                <>
+                  <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(index)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="delete" onClick={() => onDeleteProfile(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              }
+            >
+              <ListItemText primary={profile.name} secondary={`Height: ${profile.height}m`} />
+            </ListItem>
+            {index < profiles.length - 1 && <Divider />}
+          </div>
         ))}
       </List>
     </Box>

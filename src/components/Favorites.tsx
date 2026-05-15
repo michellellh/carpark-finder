@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemText, Typography, IconButton } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, IconButton, Box, Divider } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { Carpark } from '../types/carpark';
 
@@ -13,21 +13,29 @@ const Favorites = ({ favorites, onRemoveFavorite }: FavoritesProps) => {
   }
 
   return (
-    <List>
-      {favorites.map((carpark) => (
-        <ListItem
-          key={carpark.carpark_id}
-          secondaryAction={
-            <IconButton edge="end" aria-label="delete" onClick={() => onRemoveFavorite(carpark.carpark_id)}>
-              <DeleteIcon />
-            </IconButton>
-          }
-        >
-          <ListItemText
-            primary={carpark.address}
-            secondary={`Available Lots: ${carpark.available_lots} / ${carpark.total_lots}`}
-          />
-        </ListItem>
+    <List sx={{ bgcolor: 'background.paper' }}>
+      {favorites.map((carpark, index) => (
+        <div key={carpark.carpark_id}>
+          <ListItem
+            secondaryAction={
+              <IconButton edge="end" aria-label="delete" onClick={() => onRemoveFavorite(carpark.carpark_id)}>
+                <DeleteIcon />
+              </IconButton>
+            }
+          >
+            <ListItemText
+              primary={carpark.address}
+              secondary={
+                <Box component="span" sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography component="span" variant="body2" color="text.secondary">
+                    Gantry: {carpark.gantry_height}m | Type: {carpark.car_park_type}
+                  </Typography>
+                </Box>
+              }
+            />
+          </ListItem>
+          {index < favorites.length - 1 && <Divider variant="inset" component="li" />}
+        </div>
       ))}
     </List>
   );

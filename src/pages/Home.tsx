@@ -109,7 +109,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    Promise.resolve().then(() => fetchData());
+    fetchData();
   }, [fetchData]);
 
   const filteredCarparks = useMemo(() => {
@@ -182,7 +182,8 @@ const Home = () => {
               label="Vehicle Height (m)"
               value={vehicleHeight}
               onChange={(e) => setVehicleHeight(e.target.value)}
-              InputProps={{ inputProps: { step: '0.1' } }}
+              type="number"
+              inputProps={{ step: '0.1' }}
               sx={{ minWidth: 180 }}
             />
             <TextField

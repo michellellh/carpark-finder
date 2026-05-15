@@ -1,4 +1,4 @@
-import { List, ListItemButton, ListItemText, Typography, CircularProgress, Box, Divider, IconButton } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Typography, CircularProgress, Box, Divider, IconButton } from '@mui/material';
 import StarBorder from '@mui/icons-material/StarBorder';
 import Star from '@mui/icons-material/Star';
 import type { Carpark } from '../types/carpark';
@@ -30,30 +30,34 @@ const CarparkList = ({ carparks, loading, onCarparkSelect, selectedCarpark, favo
     <List sx={{ bgcolor: 'background.paper' }}>
       {carparks.map((carpark, index) => (
         <div key={carpark.carpark_id}>
-          <ListItemButton
-            alignItems="flex-start"
-            selected={selectedCarpark?.carpark_id === carpark.carpark_id}
-            onClick={() => onCarparkSelect(carpark)}
+          <ListItem
+            disablePadding
             secondaryAction={
               <IconButton edge="end" aria-label="favorite" onClick={() => onToggleFavorite(carpark.carpark_id)}>
                 {favorites.includes(carpark.carpark_id) ? <Star /> : <StarBorder />}
               </IconButton>
             }
           >
-            <ListItemText
-              primary={carpark.address}
-              secondary={
-                <Box component="span" sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography component="span" variant="body2" color="text.secondary">
-                    Gantry: {carpark.gantry_height}m | Type: {carpark.car_park_type}
-                  </Typography>
-                   <Typography component="span" variant="body2" color="text.secondary">
-                    Price: ${carpark.price.toFixed(2)} / hr
-                  </Typography>
-                </Box>
-              }
-            />
-          </ListItemButton>
+            <ListItemButton
+              alignItems="flex-start"
+              selected={selectedCarpark?.carpark_id === carpark.carpark_id}
+              onClick={() => onCarparkSelect(carpark)}
+            >
+              <ListItemText
+                primary={carpark.address}
+                secondary={
+                  <Box component="span" sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography component="span" variant="body2" color="text.secondary">
+                      Gantry: {carpark.gantry_height}m | Type: {carpark.car_park_type}
+                    </Typography>
+                     <Typography component="span" variant="body2" color="text.secondary">
+                      Price: ${carpark.price.toFixed(2)} / hr
+                    </Typography>
+                  </Box>
+                }
+              />
+            </ListItemButton>
+          </ListItem>
           {index < carparks.length - 1 && <Divider variant="inset" component="li" />}
         </div>
       ))}
