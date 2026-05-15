@@ -34,7 +34,7 @@ const Home = () => {
     const storedProfiles = localStorage.getItem('vehicle_profiles');
     return storedProfiles ? JSON.parse(storedProfiles) : [];
   });
-  const [vehicleHeight, setVehicleHeight] = useState<string>('');
+  const [vehicleHeight, setVehicleHeight] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
