@@ -1,0 +1,4 @@
+carpark_id,address,latitude,longitude,total_lots,available_lots
+1,123 Main St,1.3521,103.8198,100,50
+2,456 Orchard Rd,1.3048,103.8318,200,120
+3,789 Raffles Pl,1.2839,103.8514,150,25
