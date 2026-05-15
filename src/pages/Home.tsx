@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, type ChangeEvent } from 'react';
 import {
   Container,
   CircularProgress,
@@ -61,56 +61,52 @@ const Home = () => {
     setHasSearched(true);
   };
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const staticDataResponse = await fetch('/Carpark_gantryheight.csv');
-
-      if (!staticDataResponse.ok) {
-        throw new Error('Failed to fetch carpark data.');
-      }
-
-      const staticCsv = await staticDataResponse.text();
-
-      Papa.parse(staticCsv, {
-        header: true,
-        complete: (results: Papa.ParseResult<Record<string, string>>) => {
-          const staticCarparks = results.data;
-          const mergedCarparks = staticCarparks.map(staticCarpark => {
-            if (!staticCarpark.CAR_PARK_NO || !staticCarpark.X_COORD || !staticCarpark.Y_COORD) {
-              return null;
-            }
-            const { latitude, longitude } = convertSvy21ToWgs84(parseFloat(staticCarpark.X_COORD), parseFloat(staticCarpark.Y_COORD));
-            return {
-              carpark_id: staticCarpark.CAR_PARK_NO,
-              address: staticCarpark.ADDRESS,
-              latitude,
-              longitude,
-              gantry_height: parseFloat(staticCarpark.GANTRY_HEIGHT) || 0,
-              car_park_type: staticCarpark.CAR_PARK_TYPE,
-              price: parseFloat((Math.random() * 4 + 1).toFixed(2)), // Simulated price
-            };
-          }).filter((p): p is Carpark => p !== null);
-          setCarparks(mergedCarparks);
-          setLoading(false);
-        },
-        error: (err: Papa.ParseError) => {
-          setError('Error parsing CSV data.');
-          setLoading(false);
-          console.error(err);
-        }
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-      setLoading(false);
-      console.error(err);
-    }
-  }, []);
-
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const staticDataResponse = await fetch('/Carpark_gantryheight.csv');
+        if (!staticDataResponse.ok) {
+          throw new Error('Failed to fetch carpark data.');
+        }
+        const staticCsv = await staticDataResponse.text();
+        Papa.parse(staticCsv, {
+          header: true,
+          complete: (results: Papa.ParseResult<Record<string, string>>) => {
+            const staticCarparks = results.data;
+            const mergedCarparks = staticCarparks.map(staticCarpark => {
+              if (!staticCarpark.CAR_PARK_NO || !staticCarpark.X_COORD || !staticCarpark.Y_COORD) {
+                return null;
+              }
+              const { latitude, longitude } = convertSvy21ToWgs84(parseFloat(staticCarpark.X_COORD), parseFloat(staticCarpark.Y_COORD));
+              return {
+                carpark_id: staticCarpark.CAR_PARK_NO,
+                address: staticCarpark.ADDRESS,
+                latitude,
+                longitude,
+                gantry_height: parseFloat(staticCarpark.GANTRY_HEIGHT) || 0,
+                car_park_type: staticCarpark.CAR_PARK_TYPE,
+                price: parseFloat((Math.random() * 4 + 1).toFixed(2)), // Simulated price
+              };
+            }).filter((p): p is Carpark => p !== null);
+            setCarparks(mergedCarparks);
+            setLoading(false);
+          },
+          error: (err: Papa.ParseError) => {
+            setError('Error parsing CSV data.');
+            setLoading(false);
+            console.error(err);
+          }
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+        setLoading(false);
+        console.error(err);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   const filteredCarparks = useMemo(() => {
     if (!hasSearched) {
@@ -183,7 +179,7 @@ const Home = () => {
               value={vehicleHeight}
               onChange={(e) => setVehicleHeight(e.target.value)}
               type="number"
-              inputProps={{ step: '0.1' }}
+              InputProps={{ inputProps: { step: '0.1' } }}
               sx={{ minWidth: 180 }}
             />
             <TextField

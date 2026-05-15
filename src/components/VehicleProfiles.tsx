@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import {
   Box,
   Button,
@@ -55,7 +55,7 @@ const VehicleProfiles = ({ profiles, onAddProfile, onUpdateProfile, onDeleteProf
           value={height}
           onChange={(e) => setHeight(e.target.value)}
           type="number"
-          inputProps={{ step: '0.1' }}
+          InputProps={{ inputProps: { step: '0.1' } }}
         />
         <Button onClick={handleSave} variant="contained">{editingIndex !== null ? 'Save' : 'Add'}</Button>
       </Box>
